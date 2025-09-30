@@ -1,0 +1,43 @@
+Scope
+- Basic voxel editing with subtractive, additive editing, coloring
+- Undo/Redo system
+- Basic diffuse material; should be able to change transparency probably.
+- Serializable structures that can be exported and imported
+- Basic, ambient occlusion, shadowing based on IQ's shaders
+
+Initial Vision
+- Simple editor with Blender-like grid; gradient background like in your ShaderToy voxel demos.
+
+** Graphics: Look at optifine shader source code!
+
+Todo
+[ ] Cleanup
+		- increase granularity of rendering
+		- maybe make granularity of updating and drawing per-chunk
+		- rework uniform data: don't duplicate calculations on cpu/gpu, upload parameters.
+		- instead of using VOX_UniformData in several places, you can just use that struct
+			when uploading data to shader and do something like VOX_ViewParameters or something.
+			when you need to populate uniform data, just use fields from view parameters and
+			wherever else it needs to come from.
+
+[ ] Bugs
+    - Picking ray seems to be slightly off from mouse... 
+
+[X] Editing modes: add and delete
+
+[ ] Toggling grid plane and voxel outlines
+[ ] Lighting pass pt. 2: AO, shadows
+[ ] Antialiasing, tonemapping
+
+[ ] Brush size
+[ ] Basic color and opacity selection 
+
+[ ] Serialization, undo system
+
+[ ] Polish:
+ - Make fov adjustable
+ - Lerp between zoom transitions
+
+[ ] Cleanup and knowledge refresher pass over all code
+
+------------------------------------------------

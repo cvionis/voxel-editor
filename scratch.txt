@@ -1,0 +1,17 @@
+- Actual input abstraction
+- Voxel context should own a voxel rendering context
+
+input -> update map and parameters -> pass updated map data to rendererer -> render
+
+--- --- --- 
+
+enum VOX_EditOperation {
+  VOX_EditMode_Add,
+  VOX_EditMode_Delete,
+};
+
+struct VOX_EditState {
+  S32 selected_voxel_idx;  
+  S32 brush_size;
+	VOX_EditMode mode;
+};
