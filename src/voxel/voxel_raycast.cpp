@@ -4,15 +4,25 @@ vox_map(V3F32 pos, F32 voxel_scale)
 	VOX_MapResult result = {0};
   result.idx = -1;
   
+#if 0
 	// Treat center of chunk as origin
 	pos.x += (VOX_SLICE_SIZE * voxel_scale) / 2.f;
 	pos.z += (VOX_SLICE_SIZE * voxel_scale) / 2.f;
-	pos.y += (VOX_SLICE_SIZE * voxel_scale) / 2.f;
+#endif
+	//pos.y += (VOX_SLICE_SIZE * voxel_scale) / 2.f;
+  pos.y += (VOX_SLICE_SIZE );
   
+#if 0
 	V3S32 chunk_coord = {0};
-  chunk_coord.x = (S32)(pos.x / voxel_scale - 0.5f);
-  chunk_coord.y = (S32)(pos.y / voxel_scale - 0.5f);
-  chunk_coord.z = (S32)(pos.z / voxel_scale - 0.5f);
+  chunk_coord.x = (S32)(pos.x / voxel_scale);
+  chunk_coord.y = (S32)(pos.y / voxel_scale);
+  chunk_coord.z = (S32)(pos.z / voxel_scale);
+#endif
+  
+  V3S32 chunk_coord = {0};
+  chunk_coord.x = (S32)(pos.x);
+  chunk_coord.y = (S32)(pos.y);
+  chunk_coord.z = (S32)(pos.z);
   
   B32 coord_valid = 
   (chunk_coord.x >= 0 && chunk_coord.x < VOX_SLICE_SIZE) && 

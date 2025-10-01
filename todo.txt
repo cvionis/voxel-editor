@@ -11,9 +11,17 @@ Initial Vision
 ** Graphics: Look at optifine shader source code!
 
 Todo
-[ ] Grid scale changes when view angle changes!
-[ ] Editing doesn't seem to work properly when changing zoom.
-[ ] Edit grid size when changing zoom.
+[ ] Grid fixed, but need to rethink math necessary to get zoom to work when 
+    raymarching and fix picking.
+[ ] Voxels are no perfectly cubical when changing zoom level.
+[ ] Trying to add voxels to empty chunk currently does not work due to CPU-side raycast
+		logic.
+
+[ ] Antialiasing
+[ ] Nicer lighting
+[ ] Performance isn't great even at low resolution. Optimize shader.
+
+[ ] Crashes on release
 
 [ ] Cleanup
 		- increase granularity of rendering

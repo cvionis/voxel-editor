@@ -55,7 +55,7 @@ static const float3 palette[4] = {
 	float3(0.123, 0.22, 0.24),
 };
 
-static const float steps_max = 256.0;
+static const float steps_max = 512.0;
 
 PS_INPUT 
 vs_main(VS_INPUT input)
@@ -70,11 +70,14 @@ Voxel
 get_voxel(float3 pos) 
 {
 	float3 chunk_origin = float3(0,0,0);
+#if 0
 	float voxel_size = zoom;
-	int3 chunk_coord = int3((pos - chunk_origin) / voxel_size);
-	
+	//int3 chunk_coord = int3((pos - chunk_origin) / voxel_size);
+	int3 chunk_coord = int3((pos - chunk_origin));
+
 	//float4 s = chunk_texture.Load(int4(chunk_coord.xyz, 0));
-	float4 s = chunk_texture.Load(int4(pos.xyz/voxel_size, 0));
+#endif	
+	float4 s = chunk_texture.Load(int4(pos.xyz, 0));
 
 	Voxel result;
 	result.opacity = s.x;
@@ -116,6 +119,7 @@ float
 map1(float3 pos)
 {
 	float d = -pos.y;
+
 	return d;
 }
 
@@ -124,10 +128,13 @@ map(float3 pos)
 {
 	MapResult result;
 
+#if 0
 	// Origin in center not corner
 	pos.x += (chunk_slice_size * zoom) / 2;
 	pos.z += (chunk_slice_size * zoom) / 2;
-	pos.y += (chunk_slice_size * zoom) / 2;
+#endif
+
+	pos.y += (chunk_slice_size);
 
 	Voxel v = get_voxel(pos);
 
@@ -153,7 +160,7 @@ raymarch(float3 ro, float3 rd)
   // Convert stp to a value between 0 and 1 so we can use it to scale the ray
   // direction vector below.
   float3 stp_positive = (stp * 0.5) + 0.5;
-   
+
   // Distance to next voxel boundary expressed as a parametric 
   // t-value along the current pixel's ray.
 	float3 t_max;
@@ -241,7 +248,7 @@ ps_main(PS_INPUT input) : SV_TARGET
 	
 	float3 color = lerp(float3(0.22,0.22,0.12), float3(0.23,0.32,0.24), 2.0-dot(p,p));
 	float3 normal = float3(0,0,0);
-
+	
 	float d;
 	int hit = 0;
 	float t = 0;
@@ -260,7 +267,7 @@ ps_main(PS_INPUT input) : SV_TARGET
 		float3 bg_color = color;
 		normal = float3(0.,-1,0.);
 
-		float3 grid_color = float3(0.5,0.5,0.5);
+		float3 grid_color = float3(0.1,0.1,0.1);
         
     float grid_cell_freq = 1.;
 		float2 uv = pos.xz*grid_cell_freq;
@@ -278,7 +285,7 @@ ps_main(PS_INPUT input) : SV_TARGET
 		color = res.color;
 		normal = res.normal;
 
- 	 float3 key_dir = float3(-0.5, -0.6, -0.5);
+ 	 float3 key_dir = normalize(float3(-0.35, -0.6, -0.5));
 	  float3 key_col = float3(1.64, 1.27, 0.99);
 	  float  key = clamp(dot(normal, key_dir), 0.0, 1.0);
 

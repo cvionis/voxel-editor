@@ -28,8 +28,8 @@ vox_update_uniforms(VOX_Context *ctx)
   {
     uniforms->client_size = v2f32((F32)r->client_size.x, (F32)r->client_size.y);
     uniforms->time = time;
-    uniforms->zoom += vox_key_pressed(input, VOX_Key_Equal)*0.5f;
-    uniforms->zoom -= vox_key_pressed(input, VOX_Key_Minus)*0.5f;
+    uniforms->zoom += vox_key_pressed(input, VOX_Key_Equal)*0.1f;
+    uniforms->zoom -= vox_key_pressed(input, VOX_Key_Minus)*0.1f;
   }
   
   // View angle (@Todo)
