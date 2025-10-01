@@ -11,6 +11,10 @@ Initial Vision
 ** Graphics: Look at optifine shader source code!
 
 Todo
+[ ] Grid scale changes when view angle changes!
+[ ] Editing doesn't seem to work properly when changing zoom.
+[ ] Edit grid size when changing zoom.
+
 [ ] Cleanup
 		- increase granularity of rendering
 		- maybe make granularity of updating and drawing per-chunk
@@ -25,7 +29,6 @@ Todo
 
 [X] Editing modes: add and delete
 
-[ ] Toggling grid plane and voxel outlines
 [ ] Lighting pass pt. 2: AO, shadows
 [ ] Antialiasing, tonemapping
 

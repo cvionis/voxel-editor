@@ -36,7 +36,7 @@ entry_point(void)
       
       v->id0 = (U8)((voxel_idx >> 8) & 255);
       v->id1 = (U8)(voxel_idx & 255);
-      
+#if 0
       if (voxel_idx >= VOX_CHUNK_SIZE/8) {
         v->color = 0;
       }
@@ -46,6 +46,7 @@ entry_point(void)
       if (voxel_idx >= VOX_CHUNK_SIZE/2) {
         v->color = 1;
       }
+#endif
     }
   }
   

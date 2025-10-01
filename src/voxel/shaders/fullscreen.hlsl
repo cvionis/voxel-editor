@@ -55,7 +55,7 @@ static const float3 palette[4] = {
 	float3(0.123, 0.22, 0.24),
 };
 
-static const float steps_max = 512.0;
+static const float steps_max = 256.0;
 
 PS_INPUT 
 vs_main(VS_INPUT input)
@@ -88,6 +88,37 @@ get_voxel(float3 pos)
 	return result;
 }	
 
+// https://www.shadertoy.com/view/XtBfzz
+float 
+filtered_grid(float2 p, float2 dx, float2 dy)
+{
+	const float N = 12.0;
+	// filter kernel
+  float2 w = max(abs(dx), abs(dy)) + 0.01;
+
+	// analytic (box) filtering
+  float2 a = p + 0.5*w;                        
+  float2 b = p - 0.5*w;           
+  float2 i = (floor(a)+min(frac(a)*N,1.0)-floor(b)-min(frac(b)*N,1.0))/(N*w);
+  // pattern
+  return (1.0-i.x)*(1.0-i.y);
+}
+
+float3 
+apply_fog(float3 col, float3 fog_col, float t)
+{
+  float b = 0.05;
+  float fog = 1.0 - exp(-t*b);
+  return lerp(col, fog_col, fog);
+}
+
+float 
+map1(float3 pos)
+{
+	float d = -pos.y;
+	return d;
+}
+
 MapResult 
 map(float3 pos)
 {
@@ -103,7 +134,7 @@ map(float3 pos)
 	result.d = v.opacity;
 	result.color = palette[v.palette_idx];
 	result.id = v.id;
-	
+
 	return result;
 }
 
@@ -170,7 +201,7 @@ raymarch(float3 ro, float3 rd)
 
     steps += 1.0;
   }
-
+	
 	res.hit = hit;
 	res.color = map_res.color;
 	res.pos = pos;	
@@ -185,6 +216,7 @@ float4
 ps_main(PS_INPUT input) : SV_TARGET
 {
 	float2 frag_coord = float2(input.pos.x, input.pos.y);
+
 	float2 p = (frag_coord - client_size*0.5) / client_size.y;
 
 	float view_angle = 10.*view.x / client_size.x;
@@ -210,19 +242,48 @@ ps_main(PS_INPUT input) : SV_TARGET
 	float3 color = lerp(float3(0.22,0.22,0.12), float3(0.23,0.32,0.24), 2.0-dot(p,p));
 	float3 normal = float3(0,0,0);
 
+	float d;
+	int hit = 0;
+	float t = 0;
+	float3 pos = float3(0,0,0);		
+
+	for (float stp = 0.0; stp < 256; stp += 1.0) {
+	  pos = ro + t*rd;
+		d = map1(pos);
+		if (d < 0.001) { 
+			hit = 1;
+			break;
+		}
+		t += d;
+	}
+	if (hit) {
+		float3 bg_color = color;
+		normal = float3(0.,-1,0.);
+
+		float3 grid_color = float3(0.5,0.5,0.5);
+        
+    float grid_cell_freq = 1.;
+		float2 uv = pos.xz*grid_cell_freq;
+    float2 ddx_uv = ddx(uv); 
+    float2 ddy_uv = ddy(uv); 
+        
+    float grid_f = (1.0-filtered_grid(uv, ddx_uv, ddy_uv));
+    color = lerp(color, grid_color, grid_f);
+		float tmp = 0.2;
+    color = apply_fog(color, bg_color, tmp*t);
+	}
+
 	RaymarchResult res = raymarch(ro, rd);
 	if (res.hit) {
 		color = res.color;
 		normal = res.normal;
 
-	  float3 key_dir = float3(-0.5, -0.6, -0.5);
+ 	 float3 key_dir = float3(-0.5, -0.6, -0.5);
 	  float3 key_col = float3(1.64, 1.27, 0.99);
 	  float  key = clamp(dot(normal, key_dir), 0.0, 1.0);
 
 		float3 sky_col = float3(0.16,0.20,0.28);
-		//float sky = clamp(0.5 + 0.5*normal.y, 0.0, 1.0);
 		float sky = clamp(0.5 - 0.5*normal.y, 0.0, 1.0);
-		//float sky = 0;
 
 		float3 ind_col = float3(0.40,0.28,0.20);
 		float ind = clamp(dot(normal, normalize(key_dir*float3(-1.0,0.0,-1.0))), 0.0, 1.0);
@@ -232,7 +293,7 @@ ps_main(PS_INPUT input) : SV_TARGET
 
 		float gamma = 1.0/2.2;
 		color = pow(color, float3(gamma,gamma,gamma));
-  }	
+	}
 
 	return float4(color.xyz, 1.0);
 }
